@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 
 namespace ImageGallery.API
 {
@@ -21,7 +22,11 @@ namespace ImageGallery.API
                 {
                     var context = scope.ServiceProvider.GetService<GalleryContext>();
                     context.Database.Migrate();
-                    context.EnsureSeedDataForContext();
+                    // 仅在 Image 没有数据时才 Seed
+                    if (!context.Images.Any())
+                    {
+                        context.EnsureSeedDataForContext();
+                    }
                 }
                 catch (Exception ex)
                 {
