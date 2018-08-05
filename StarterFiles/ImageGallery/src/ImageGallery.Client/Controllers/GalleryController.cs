@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -190,6 +191,28 @@ namespace ImageGallery.Client.Controllers
             await HttpContext.SignOutAsync("Cookies");
             // 从 IdentityServer 注销登录
             await HttpContext.SignOutAsync("oidc");
+        }
+
+        public async Task<IActionResult> OrderFrame()
+        {
+            // 获取 UserInfoEndpoint
+            var discoveryClient = new DiscoveryClient("https://localhost:44319");
+            var metaDataResponse = await discoveryClient.GetAsync();
+
+            var userInfoClient = new UserInfoClient(metaDataResponse.UserInfoEndpoint);
+
+            // 获取 AccessToken
+            var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+
+            // 获取 UserInfo
+            var response = await userInfoClient.GetAsync(accessToken);
+            if (response.IsError)
+            {
+                throw  new Exception("Problem accesing the UserInfo endpoint");
+            }
+
+            var address = response.Claims.FirstOrDefault(c => c.Type == "address")?.Value;
+            return View(new OrderFrameViewModel(address));
         }
     }
 }

@@ -18,7 +18,8 @@ namespace Junguoguo.IDP
                 // 必须， 提供用户名密码等验证
                 new IdentityResources.OpenId(),
                 // 添加以支持返回 User 上的自定义属性 Claims， 如 CurrentAddr 等
-                new IdentityResources.Profile()
+                new IdentityResources.Profile(),
+                new IdentityResources.Address()
             };
         }
 
@@ -42,7 +43,8 @@ namespace Junguoguo.IDP
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Address
                     },
                     ClientSecrets =
                     {
@@ -68,8 +70,8 @@ namespace Junguoguo.IDP
                         new Claim("name", "Frank Hawk"),
                         new Claim("family_name", "Hawk"),
                         new Claim("given_name", "Frank"),
-                        new Claim("website", "https://frank.com"),
-                        new Claim("CurrentAddr","USA. LA")
+                        new Claim("profile", "https://frank.com"),
+                        new Claim("address","USA. LA")
                     }
                 },
                 new TestUser
@@ -80,8 +82,8 @@ namespace Junguoguo.IDP
                     Claims = new List<Claim>
                     {
                         new Claim("name", "Claire Underwood"),
-                        new Claim("website", "https://claire.com"),
-                        new Claim("CurrentAddr","USA. Tex")
+                        new Claim("profile", "https://claire.com"),
+                        new Claim("address","USA. Tex")
                     }
                 },
                 // 自己的测试用户，SubjectId 用 guid 生成一个
@@ -93,8 +95,8 @@ namespace Junguoguo.IDP
                     Claims = new List<Claim>
                     {
                         new Claim("name", "Alex Mercer"),
-                        new Claim("website", "https://junguoguo.com"),
-                        new Claim("CurrentAddr","CHN. Heaven")
+                        new Claim("profile", "https://junguoguo.com"),
+                        new Claim("address","CHN. Heaven")
                     }
                 }
             };
