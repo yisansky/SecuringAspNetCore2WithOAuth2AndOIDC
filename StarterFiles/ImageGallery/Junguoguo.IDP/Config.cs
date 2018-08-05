@@ -24,7 +24,32 @@ namespace Junguoguo.IDP
 
         public static IEnumerable<Client> GetClients()
         {
-            return new List<Client>();
+            return new List<Client>()
+            {
+                new Client()
+                {
+                    ClientName = "Image Gallery",
+                    ClientId = "junguoguoimagegalleryclient",
+                    AllowedGrantTypes = GrantTypes.Hybrid,
+                    RedirectUris = new List<string>()
+                    {
+                        "https://localhost:44314/signin-oidc"
+                    },
+                    PostLogoutRedirectUris = new List<string>()
+                    {
+                        "https://localhost:44314/signout-callback-oidc"
+                    },
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile
+                    },
+                    ClientSecrets =
+                    {
+                        new Secret("junguoguosecret".Sha256())
+                    }
+                }
+            };
         }
 
         public static List<TestUser> GetUsers()
@@ -41,6 +66,8 @@ namespace Junguoguo.IDP
                     Claims = new List<Claim>
                     {
                         new Claim("name", "Frank Hawk"),
+                        new Claim("family_name", "Hawk"),
+                        new Claim("given_name", "Frank"),
                         new Claim("website", "https://frank.com"),
                         new Claim("CurrentAddr","USA. LA")
                     }

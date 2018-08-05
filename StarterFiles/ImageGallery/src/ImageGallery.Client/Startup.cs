@@ -1,4 +1,5 @@
-﻿using ImageGallery.Client.Services;
+﻿using IdentityModel;
+using ImageGallery.Client.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -29,6 +30,28 @@ namespace ImageGallery.Client
 
             // register an IImageGalleryHttpClient
             services.AddScoped<IImageGalleryHttpClient, ImageGalleryHttpClient>();
+
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = "Cookies";
+                    options.DefaultChallengeScheme = "oidc";
+                }).AddCookie("Cookies")
+                .AddOpenIdConnect("oidc", options =>
+                {
+                    options.SignInScheme = "Cookies";
+                    // IDP server 的url
+                    options.Authority = "https://localhost:44319/";
+                    options.ClientId = "junguoguoimagegalleryclient";
+                    // specify use hybrid mode
+                    options.ResponseType = "code id_token";
+                    options.CallbackPath = new PathString("/signin-oidc");
+                    options.SignedOutCallbackPath = new PathString("/signout-callback-oidc");
+                    options.Scope.Add("openid");
+                    options.Scope.Add("profile");
+                    options.SaveTokens = true;
+                    options.ClientSecret = "junguoguosecret";
+                    options.GetClaimsFromUserInfoEndpoint = true;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +65,9 @@ namespace ImageGallery.Client
             {
                 app.UseExceptionHandler("/Shared/Error");
             }
+
+            // 需要放在 UseMvc 前
+            app.UseAuthentication();
 
             app.UseStaticFiles();
 

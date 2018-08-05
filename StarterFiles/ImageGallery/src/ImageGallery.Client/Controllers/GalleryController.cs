@@ -5,13 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace ImageGallery.Client.Controllers
 {
+    [Authorize]
     public class GalleryController : Controller
     {
         private readonly IImageGalleryHttpClient _imageGalleryHttpClient;
@@ -23,6 +28,8 @@ namespace ImageGallery.Client.Controllers
 
         public async Task<IActionResult> Index()
         {
+            await WriteOutIdentityInformation();
+
             // call the API
             var httpClient = await _imageGalleryHttpClient.GetClient(); 
 
@@ -160,6 +167,29 @@ namespace ImageGallery.Client.Controllers
             }
 
             throw new Exception($"A problem happened while calling the API: {response.ReasonPhrase}");
-        }               
+        }
+
+
+        private async Task WriteOutIdentityInformation()
+        {
+            // 获取保存的 identity token
+            var identityToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+
+            Debug.WriteLine($"Identity token:{identityToken}");
+
+            // 打印出 User Claims
+            foreach (var claim in User.Claims)
+            {
+                Debug.WriteLine($"Claim type : {claim.Type} - Claim value : {claim.Value}");
+            }
+        }
+
+        public async Task Logout()
+        {
+            // 从 Client 端注销登录
+            await HttpContext.SignOutAsync("Cookies");
+            // 从 IdentityServer 注销登录
+            await HttpContext.SignOutAsync("oidc");
+        }
     }
 }
