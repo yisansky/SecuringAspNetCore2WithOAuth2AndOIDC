@@ -1,9 +1,19 @@
 ﻿@model ImageGallery.Client.ViewModels.OrderFrameViewModel
 
 <div class="container">
+    <div class="text bottomMarginSmall">@Model.ExtraInfo</div>
     <div class="h3 bottomMarginDefault">选择一张你喜欢的图片，定做一个实体画</div>
     <div class="text bottomMarginSmall">系统记录您的地址为：</div>
     <div class="text text-info bottomMarginSmall">@Model.Address</div>
     <div class="text">如果这个地址不正确，请联系我们。</div>
+    <hr/>
+    @if (@Model.Role == "FreeUser")
+    {
+        <div class="text">您还不是付费用户哦，请先成为会员吧！</div>
+    }
+    else
+    {
+        <div class="text">系统已记录请求，货品将择日发出！</div>
+    }
 </div>
 

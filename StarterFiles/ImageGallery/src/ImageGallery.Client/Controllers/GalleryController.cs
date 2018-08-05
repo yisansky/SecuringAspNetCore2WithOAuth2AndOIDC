@@ -170,21 +170,6 @@ namespace ImageGallery.Client.Controllers
             throw new Exception($"A problem happened while calling the API: {response.ReasonPhrase}");
         }
 
-
-        private async Task WriteOutIdentityInformation()
-        {
-            // 获取保存的 identity token
-            var identityToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
-
-            Debug.WriteLine($"Identity token:{identityToken}");
-
-            // 打印出 User Claims
-            foreach (var claim in User.Claims)
-            {
-                Debug.WriteLine($"Claim type : {claim.Type} - Claim value : {claim.Value}");
-            }
-        }
-
         public async Task Logout()
         {
             // 从 Client 端注销登录
@@ -195,6 +180,10 @@ namespace ImageGallery.Client.Controllers
 
         public async Task<IActionResult> OrderFrame()
         {
+            var model = new OrderFrameViewModel(User.Claims.FirstOrDefault(c => c.Type == "address")?.Value);
+            model.ExtraInfo = User.Claims.FirstOrDefault(c => c.Type == "extra")?.Value;
+            model.Role = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+
             // 获取 UserInfoEndpoint
             var discoveryClient = new DiscoveryClient("https://localhost:44319");
             var metaDataResponse = await discoveryClient.GetAsync();
@@ -212,7 +201,27 @@ namespace ImageGallery.Client.Controllers
             }
 
             var address = response.Claims.FirstOrDefault(c => c.Type == "address")?.Value;
-            return View(new OrderFrameViewModel(address));
+            return View(model); // new OrderFrameViewModel(address));
+        }
+
+        private async Task WriteOutIdentityInformation()
+        {
+            // 获取保存的 identity token
+            var identityToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+
+            Debug.WriteLine($"Identity token:{identityToken}");
+
+            // 打印出 User Claims
+            foreach (var claim in User.Claims)
+            {
+                Debug.WriteLine($"Claim type : {claim.Type} - Claim value : {claim.Value}");
+            }
+        }
+
+        [Authorize(Roles = "admin,administrator")]
+        public async Task<IActionResult> ManageSite()
+        {
+            return View();
         }
     }
 }

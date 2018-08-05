@@ -19,7 +19,9 @@ namespace Junguoguo.IDP
                 new IdentityResources.OpenId(),
                 // 添加以支持返回 User 上的自定义属性 Claims， 如 CurrentAddr 等
                 new IdentityResources.Profile(),
-                new IdentityResources.Address()
+                new IdentityResources.Address(),
+                new IdentityResource("guoguoextrainfo", "Guo's extra memo", new List<string>(){"extra"}),
+                new IdentityResource("roles", "Your role(s)", new List<string>(){"role"})
             };
         }
 
@@ -44,7 +46,9 @@ namespace Junguoguo.IDP
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.Address
+                        IdentityServerConstants.StandardScopes.Address,
+                        "roles",
+                        "guoguoextrainfo"
                     },
                     ClientSecrets =
                     {
@@ -71,7 +75,9 @@ namespace Junguoguo.IDP
                         new Claim("family_name", "Hawk"),
                         new Claim("given_name", "Frank"),
                         new Claim("profile", "https://frank.com"),
-                        new Claim("address","USA. LA")
+                        new Claim("address","USA. LA"),
+                        new Claim("role","FreeUser"),
+                        new Claim("extra","Frank 才14岁就上大学了，厉害")
                     }
                 },
                 new TestUser
@@ -83,7 +89,9 @@ namespace Junguoguo.IDP
                     {
                         new Claim("name", "Claire Underwood"),
                         new Claim("profile", "https://claire.com"),
-                        new Claim("address","USA. Tex")
+                        new Claim("address","USA. Tex"),
+                        new Claim("role","PayingUser"),
+                        new Claim("extra","Claire is almost a godess")
                     }
                 },
                 // 自己的测试用户，SubjectId 用 guid 生成一个
@@ -96,7 +104,9 @@ namespace Junguoguo.IDP
                     {
                         new Claim("name", "Alex Mercer"),
                         new Claim("profile", "https://junguoguo.com"),
-                        new Claim("address","CHN. Heaven")
+                        new Claim("address","CHN. Heaven"),
+                        new Claim("role","admin"),
+                        new Claim("extra","俊果果是网站管理员")
                     }
                 }
             };

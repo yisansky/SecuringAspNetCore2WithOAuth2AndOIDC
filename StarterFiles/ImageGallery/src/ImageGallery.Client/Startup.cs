@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ImageGallery.Client
 {
@@ -39,7 +40,12 @@ namespace ImageGallery.Client
                 {
                     options.DefaultScheme = "Cookies";
                     options.DefaultChallengeScheme = "oidc";
-                }).AddCookie("Cookies")
+                }).AddCookie("Cookies",
+                    (options) =>
+                    {
+                        // 用户是否有权限访问页面，信息来源是Cookie，所以在这里加
+                        options.AccessDeniedPath = "/Authorization/AccessDenied";
+                    })
                 .AddOpenIdConnect("oidc", options =>
                 {
                     options.SignInScheme = "Cookies";
@@ -53,6 +59,8 @@ namespace ImageGallery.Client
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
                     options.Scope.Add("address");
+                    options.Scope.Add("roles");
+                    options.Scope.Add("guoguoextrainfo");
                     options.SaveTokens = true;
                     options.ClientSecret = "junguoguosecret";
                     options.GetClaimsFromUserInfoEndpoint = true;
@@ -64,6 +72,15 @@ namespace ImageGallery.Client
                     // 不需要 sid 和 idp 的值
                     options.ClaimActions.DeleteClaim("sid");
                     options.ClaimActions.DeleteClaim("idp");
+                    options.ClaimActions.MapUniqueJsonKey("address", "address");
+                    options.ClaimActions.MapUniqueJsonKey("role", "role");
+                    options.ClaimActions.MapUniqueJsonKey("extra", "extra");
+
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        NameClaimType = JwtClaimTypes.GivenName,
+                        RoleClaimType = "role" 
+                    };
                 });
         }
 
