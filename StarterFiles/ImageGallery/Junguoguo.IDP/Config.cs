@@ -31,8 +31,10 @@ namespace Junguoguo.IDP
         {
             return new List<ApiResource>
             {
-                new ApiResource("junguoguoAPI","Jun's Image Gallery API",
-                    new List<string>(){"role"})
+                new ApiResource("junguoguoAPI","Jun's Image Gallery API")
+                {
+                    UserClaims = new List<string>(){"role", "subscriptionlevel","country" }
+                }
             };
         }
 
