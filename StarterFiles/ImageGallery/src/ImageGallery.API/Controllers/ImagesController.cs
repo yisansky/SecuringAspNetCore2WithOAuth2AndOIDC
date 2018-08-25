@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 
 namespace ImageGallery.API.Controllers
@@ -28,8 +30,11 @@ namespace ImageGallery.API.Controllers
         [HttpGet()]
         public IActionResult GetImages()
         {
+            // SubjectId represents a user
+            var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub").Value;
+            var role = User.Claims.FirstOrDefault(c => c.Type == "role").Value;
             // get from repo
-            var imagesFromRepo = _galleryRepository.GetImages();
+            var imagesFromRepo = _galleryRepository.GetImages(ownerId, role=="admin");
 
             // map to model
             var imagesToReturn = Mapper.Map<IEnumerable<Model.Image>>(imagesFromRepo);
@@ -54,6 +59,7 @@ namespace ImageGallery.API.Controllers
         }
 
         [HttpPost()]
+        [Authorize(Roles = "PayingUser,admin")]
         public IActionResult CreateImage([FromBody] ImageForCreation imageForCreation)
         {
             if (imageForCreation == null)
@@ -92,6 +98,10 @@ namespace ImageGallery.API.Controllers
             // ownerId should be set - can't save image in starter solution, will
             // be fixed during the course
             //imageEntity.OwnerId = ...;
+
+
+            var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub").Value;
+            imageEntity.OwnerId = ownerId;
 
             // add and save.  
             _galleryRepository.AddImage(imageEntity);
@@ -149,6 +159,13 @@ namespace ImageGallery.API.Controllers
             if (imageFromRepo == null)
             {
                 return NotFound();
+            }
+
+            var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub").Value;
+            if (ownerId != imageFromRepo.OwnerId)
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                throw new Exception($"User are not allowd to edit this.");
             }
 
             Mapper.Map(imageForUpdate, imageFromRepo);

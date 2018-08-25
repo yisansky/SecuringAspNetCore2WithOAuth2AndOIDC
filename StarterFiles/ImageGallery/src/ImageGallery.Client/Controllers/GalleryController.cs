@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using IdentityModel.Client;
@@ -45,7 +46,10 @@ namespace ImageGallery.Client.Controllers
 
                 return View(galleryIndexViewModel);
             }          
-
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("AccessDenied", "Authorization");
+            }
             throw new Exception($"A problem happened while calling the API: {response.ReasonPhrase}");
         }
 
@@ -119,7 +123,8 @@ namespace ImageGallery.Client.Controllers
        
             throw new Exception($"A problem happened while calling the API: {response.ReasonPhrase}");
         }
-        
+
+        [Authorize(Roles = "admin,PayingUser")] // with this, user goto AddImage page will directly show AccessDenied instead
         public IActionResult AddImage()
         {
             return View();
@@ -127,6 +132,7 @@ namespace ImageGallery.Client.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin,PayingUser")] // 这里加上此代码请求会直接被 block，返回 AccessDenied 页面；方法内部逻辑不触发；；；注释掉则会由调用的 API 去校验权限
         public async Task<IActionResult> AddImage(AddImageViewModel addImageViewModel)
         {   
             if (!ModelState.IsValid)

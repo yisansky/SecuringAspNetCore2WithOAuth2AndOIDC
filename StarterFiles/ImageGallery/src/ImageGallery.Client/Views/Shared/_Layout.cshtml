@@ -34,16 +34,21 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Gallery" asp-action="Index">主页</a></li>
-                    <li><a asp-area="" asp-controller="Gallery" asp-action="AddImage">添加图片</a></li>
+                    @if (User.IsInRole("admin") || User.IsInRole("PayingUser"))
+                    {
+                        <li><a asp-area="" asp-controller="Gallery" asp-action="AddImage">添加图片</a></li>
+                    }
                     <li><a asp-area="" asp-controller="Gallery" asp-action="OrderFrame">订购实体版图画</a></li>
                     @if (User.IsInRole("admin"))
                     {
                         <li><a asp-area="" asp-controller="Gallery" asp-action="ManageSite">管理网站</a></li>
                     }
                     @if (User.Identity.IsAuthenticated)
-    {
-                <li><a asp-area="" asp-controller="Gallery" asp-action="Logout">注销登录</a></li>
-}     
+                    {
+                        <li><a asp-area="" asp-controller="Gallery" asp-action="Logout">注销登录</a></li>
+                    }
+                    <li><a asp-area="" asp-controller="" asp-action="">Welcome,@User.Claims.FirstOrDefault(c => c.Type == "name").Value</a></li>
+                    
                 </ul>
             </div>
         </div>

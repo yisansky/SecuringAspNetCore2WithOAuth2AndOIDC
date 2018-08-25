@@ -29,7 +29,8 @@ namespace Junguoguo.IDP
         {
             return new List<ApiResource>
             {
-                new ApiResource("junguoguoAPI","Jun's Image Gallery API")
+                new ApiResource("junguoguoAPI","Jun's Image Gallery API",
+                    new List<string>(){"role"})
             };
         }
 
@@ -75,7 +76,7 @@ namespace Junguoguo.IDP
                 // Claims 里面的信息可以随自己爱好添加，相当于给 User 增加自定义的属性和值
                 new TestUser
                 {
-                    SubjectId = "b7539694-97e7-4dfe-84da-b4256e1ff5c7",
+                    SubjectId = "d860efca-22d9-47fd-8249-791ba61b07c7",
                     Username = "Frank",
                     Password = "password",
                     Claims = new List<Claim>
