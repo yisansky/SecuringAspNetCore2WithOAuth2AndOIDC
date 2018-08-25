@@ -184,6 +184,7 @@ namespace ImageGallery.Client.Controllers
             await HttpContext.SignOutAsync("oidc");
         }
 
+        [Authorize("CanOrderFrame")]
         public async Task<IActionResult> OrderFrame()
         {
             var model = new OrderFrameViewModel(User.Claims.FirstOrDefault(c => c.Type == "address")?.Value);

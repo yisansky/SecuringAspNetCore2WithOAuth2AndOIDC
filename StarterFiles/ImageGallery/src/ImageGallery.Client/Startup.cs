@@ -28,7 +28,17 @@ namespace ImageGallery.Client
         {
             // Add framework services.
             services.AddMvc();
-
+            services.AddAuthorization(authorizationOptions =>
+            {
+                authorizationOptions.AddPolicy(
+                    "CanOrderFrame",
+                    policyBuilder =>
+                    {
+                        policyBuilder.RequireAuthenticatedUser();
+                        policyBuilder.RequireClaim("country", "Heaven", "CHN");
+                        policyBuilder.RequireClaim("subscriptionlevel", "supervip");
+                    });
+            });
             // register an IHttpContextAccessor so we can access the current
             // HttpContext in services by injecting it
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -62,6 +72,8 @@ namespace ImageGallery.Client
                     options.Scope.Add("roles");
                     options.Scope.Add("guoguoextrainfo");
                     options.Scope.Add("junguoguoAPI");
+                    options.Scope.Add("country");
+                    options.Scope.Add("subscriptionlevel");
                     options.SaveTokens = true;
                     options.ClientSecret = "junguoguosecret";
                     options.GetClaimsFromUserInfoEndpoint = true;
@@ -76,6 +88,8 @@ namespace ImageGallery.Client
                     options.ClaimActions.MapUniqueJsonKey("address", "address");
                     options.ClaimActions.MapUniqueJsonKey("role", "role");
                     options.ClaimActions.MapUniqueJsonKey("extra", "extra");
+                    options.ClaimActions.MapUniqueJsonKey("subscriptionlevel", "subscriptionlevel");
+                    options.ClaimActions.MapUniqueJsonKey("country", "country");
 
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {

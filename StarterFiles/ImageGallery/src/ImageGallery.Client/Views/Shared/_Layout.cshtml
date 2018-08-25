@@ -38,7 +38,10 @@
                     {
                         <li><a asp-area="" asp-controller="Gallery" asp-action="AddImage">添加图片</a></li>
                     }
-                    <li><a asp-area="" asp-controller="Gallery" asp-action="OrderFrame">订购实体版图画</a></li>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "CanOrderFrame")).Succeeded)
+                    {
+                        <li><a asp-area="" asp-controller="Gallery" asp-action="OrderFrame">订购实体版图画</a></li>
+                    }
                     @if (User.IsInRole("admin"))
                     {
                         <li><a asp-area="" asp-controller="Gallery" asp-action="ManageSite">管理网站</a></li>

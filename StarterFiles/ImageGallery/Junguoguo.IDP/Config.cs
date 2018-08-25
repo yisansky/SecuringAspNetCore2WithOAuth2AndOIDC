@@ -21,7 +21,9 @@ namespace Junguoguo.IDP
                 new IdentityResources.Profile(),
                 new IdentityResources.Address(),
                 new IdentityResource("guoguoextrainfo", "Guo's extra memo", new List<string>(){"extra"}),
-                new IdentityResource("roles", "Your role(s)", new List<string>(){"role"})
+                new IdentityResource("roles", "Your role(s)", new List<string>(){"role"}),
+                new IdentityResource("country","Country where the user lives in", new List<string>(){"country"}),
+                new IdentityResource("subscriptionlevel","User's subscription level",new List<string>(){"subscriptionlevel"})
             };
         }
 
@@ -58,7 +60,9 @@ namespace Junguoguo.IDP
                         IdentityServerConstants.StandardScopes.Address,
                         "roles",
                         "guoguoextrainfo",
-                        "junguoguoAPI"
+                        "junguoguoAPI",
+                        "subscriptionlevel",
+                        "country"
                     },
                     ClientSecrets =
                     {
@@ -87,7 +91,9 @@ namespace Junguoguo.IDP
                         new Claim("profile", "https://frank.com"),
                         new Claim("address","USA. LA"),
                         new Claim("role","FreeUser"),
-                        new Claim("extra","Frank 才14岁就上大学了，厉害")
+                        new Claim("extra","Frank 才14岁就上大学了，厉害"),
+                        new Claim("country","BK"),
+                        new Claim("subscriptionlevel","vip1")
                     }
                 },
                 new TestUser
@@ -101,7 +107,9 @@ namespace Junguoguo.IDP
                         new Claim("profile", "https://claire.com"),
                         new Claim("address","USA. Tex"),
                         new Claim("role","PayingUser"),
-                        new Claim("extra","Claire is almost a godess")
+                        new Claim("extra","Claire is almost a godess"),
+                        new Claim("country","CHN"),
+                        new Claim("subscriptionlevel","supervip")
                     }
                 },
                 // 自己的测试用户，SubjectId 用 guid 生成一个
@@ -116,7 +124,9 @@ namespace Junguoguo.IDP
                         new Claim("profile", "https://junguoguo.com"),
                         new Claim("address","CHN. Heaven"),
                         new Claim("role","admin"),
-                        new Claim("extra","俊果果是网站管理员")
+                        new Claim("extra","俊果果是网站管理员"),
+                        new Claim("country","HEAVEN"),
+                        new Claim("subscriptionlevel","supervip")
                     }
                 }
             };
