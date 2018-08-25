@@ -61,6 +61,7 @@ namespace ImageGallery.Client
                     options.Scope.Add("address");
                     options.Scope.Add("roles");
                     options.Scope.Add("guoguoextrainfo");
+                    options.Scope.Add("junguoguoAPI");
                     options.SaveTokens = true;
                     options.ClientSecret = "junguoguosecret";
                     options.GetClaimsFromUserInfoEndpoint = true;

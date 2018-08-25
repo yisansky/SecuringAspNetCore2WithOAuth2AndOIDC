@@ -25,6 +25,14 @@ namespace Junguoguo.IDP
             };
         }
 
+        public static IEnumerable<ApiResource> GetApiResources()
+        {
+            return new List<ApiResource>
+            {
+                new ApiResource("junguoguoAPI","Jun's Image Gallery API")
+            };
+        }
+
         public static IEnumerable<Client> GetClients()
         {
             return new List<Client>()
@@ -48,7 +56,8 @@ namespace Junguoguo.IDP
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Address,
                         "roles",
-                        "guoguoextrainfo"
+                        "guoguoextrainfo",
+                        "junguoguoAPI"
                     },
                     ClientSecrets =
                     {
