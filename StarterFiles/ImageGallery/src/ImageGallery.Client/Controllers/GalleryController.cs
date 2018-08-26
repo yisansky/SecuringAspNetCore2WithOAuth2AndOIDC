@@ -178,6 +178,32 @@ namespace ImageGallery.Client.Controllers
 
         public async Task Logout()
         {
+            // revoke tokens
+            var discoveryClient = new DiscoveryClient("https://localhost:44319/");
+            var meta = await discoveryClient.GetAsync();
+
+            var revocationClient = new TokenRevocationClient(
+                meta.RevocationEndpoint, "junguoguoimagegalleryclient", "junguoguosecret");
+            var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            if(!string.IsNullOrWhiteSpace(accessToken))
+            {
+                var res = await revocationClient.RevokeAccessTokenAsync(accessToken);
+                if (res.IsError)
+                {
+                    throw new Exception("Problem occured while revoke accesstoken", res.Exception);
+                }
+            };
+
+            var refreshToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+            if (!string.IsNullOrWhiteSpace(refreshToken))
+            {
+                var res = await revocationClient.RevokeRefreshTokenAsync(refreshToken);
+                if (res.IsError)
+                {
+                    throw new Exception("Problem occured while revoke refreshToken", res.Exception);
+                }
+            };
+
             // 从 Client 端注销登录
             await HttpContext.SignOutAsync("Cookies");
             // 从 IdentityServer 注销登录

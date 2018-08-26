@@ -47,6 +47,17 @@ namespace Junguoguo.IDP
                     ClientName = "Image Gallery",
                     ClientId = "junguoguoimagegalleryclient",
                     AllowedGrantTypes = GrantTypes.Hybrid,
+                    //以下 token 的时间单位都是秒
+                    IdentityTokenLifetime = 5 * 60, // 默认就是五分钟，所以这里也可以注释掉
+                    AuthorizationCodeLifetime = 5 * 60, // 默认五分钟
+                    AccessTokenLifetime = 2 * 60, // 默认 一小时。因为 IDP 有自己的刷新机制（5分钟间隔），所以这个 token 实际过期的时间也许比两分钟长
+
+                    AllowOfflineAccess = true, // 启用 'offline_access' scope
+                    AbsoluteRefreshTokenLifetime = 30 * 24 * 60 * 60, // refresh token 的绝对过期时间，默认30天
+                    RefreshTokenExpiration = TokenExpiration.Sliding, // refresh token 一般不需要设置绝对的过期时间，设置成 sliding 模式就好
+                    SlidingRefreshTokenLifetime = 5 * 60,//  sliding 模式下，当请求新的 refresh token时，他的过期时间会被重置为这里设置的值(但不会超过 AbsoluteRefreshTokenLifetime 的设置)
+                    UpdateAccessTokenClaimsOnRefresh = true, // refresh token 请求是否更新 access token 里面携带的 user claim 信息；设为 true， 即使 token 没有过期，也会更新 accesstoken 的 claim 值
+
                     RedirectUris = new List<string>()
                     {
                         "https://localhost:44314/signin-oidc"

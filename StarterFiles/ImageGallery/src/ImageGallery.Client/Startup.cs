@@ -74,6 +74,7 @@ namespace ImageGallery.Client
                     options.Scope.Add("junguoguoAPI");
                     options.Scope.Add("country");
                     options.Scope.Add("subscriptionlevel");
+                    options.Scope.Add("offline_access");
                     options.SaveTokens = true;
                     options.ClientSecret = "junguoguosecret";
                     options.GetClaimsFromUserInfoEndpoint = true;
