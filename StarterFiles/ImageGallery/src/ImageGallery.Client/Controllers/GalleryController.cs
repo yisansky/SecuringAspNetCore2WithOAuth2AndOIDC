@@ -15,6 +15,7 @@ using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using StackExchange.Profiling;
 
 namespace ImageGallery.Client.Controllers
 {
@@ -22,10 +23,12 @@ namespace ImageGallery.Client.Controllers
     public class GalleryController : Controller
     {
         private readonly IImageGalleryHttpClient _imageGalleryHttpClient;
+        private readonly GalleryRepository _repo;
 
-        public GalleryController(IImageGalleryHttpClient imageGalleryHttpClient)
+        public GalleryController(IImageGalleryHttpClient imageGalleryHttpClient, GalleryRepository repo)
         {
             _imageGalleryHttpClient = imageGalleryHttpClient;
+            _repo = repo;
         }
 
         public async Task<IActionResult> Index()
@@ -33,9 +36,18 @@ namespace ImageGallery.Client.Controllers
             await WriteOutIdentityInformation();
 
             // call the API
-            var httpClient = await _imageGalleryHttpClient.GetClient(); 
+            var httpClient = await _imageGalleryHttpClient.GetClient();
 
-            var response = await httpClient.GetAsync("api/images").ConfigureAwait(false);
+            var profiler = MiniProfiler.Current;
+            var url = "api/images";
+            HttpResponseMessage response;
+            using (profiler.Step("HTTP GET " + url))
+            {
+                var img = _repo.GetImage(new Guid());
+                response = await httpClient.GetAsync(url).ConfigureAwait(false);
+            }
+
+            var isExist = _repo.ImageExists(new Guid());
 
             if (response.IsSuccessStatusCode)
             {
